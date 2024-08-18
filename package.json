@@ -1,7 +1,12 @@
 {
-  "name": "jsonl-formatter",
-  "displayName": "jsonl-formatter",
-  "description": "A formatter for JSON Lines files",
+  "name": "jsonl-tools",
+  "displayName": "jsonl-tools",
+  "description": "A set of useful commands for working with JSON Lines files.",
+  "publisher": "benwiener",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ishmandoo/jsonl-tools"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
@@ -9,13 +14,25 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:jsonl"
+  ],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "jsonl-formatter.helloWorld",
-      "title": "Hello World"
-    }]
+    "commands": [
+      {
+        "command": "jsonl-tools.expand",
+        "title": "Expand JSONL"
+      },
+      {
+        "command": "jsonl-tools.collapse",
+        "title": "Collapse JSONL"
+      },
+      {
+        "command": "jsonl-tools.collapse-and-save",
+        "title": "Collapse JSONL and Save"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",

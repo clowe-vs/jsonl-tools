@@ -1,36 +1,99 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+	context.subscriptions.push(
+		vscode.commands.registerCommand('jsonl-tools.expand', function () {
+			let editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				return;
+			}
+			let text = editor.document.getText();
+			overwriteDocument(editor, text, expandJson(text));
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "jsonl-formatter" is now active!');
+		})
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('jsonl-tools.collapse', function () {
+			let editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				return;
+			}
+			let text = editor.document.getText();
+			overwriteDocument(editor, text, collapseJson(text));
+		})
+	);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('jsonl-formatter.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+	context.subscriptions.push(
+		vscode.commands.registerCommand('jsonl-tools.collapse-and-save', function () {
+			vscode.commands.executeCommand('jsonl-tools.collapse').then(() => {
+				vscode.commands.executeCommand('workbench.action.files.save');
+			});
+		})
+	);
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from jsonl-formatter!');
+	//on save, collapse the jsonl first
+	vscode.workspace.onWillSaveTextDocument((e) => {
+		if (e.document.languageId === 'jsonl') {
+			vscode.commands.executeCommand('jsonl-tools.collapse');
+		}
 	});
-
-	context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
-function deactivate() {}
+function overwriteDocument(editor, content, newContent) {
+	editor.edit(editBuilder => {
+		const documentStart = editor.document.positionAt(0);
+		const documentEnd = editor.document.positionAt(content.length);
+		const range = new vscode.Range(documentStart, documentEnd);
+		editBuilder.replace(range, newContent);
+	});
+}
+
+function expandJson(content) {
+	const n_spaces = 2;
+	let formattedContent;
+	try {
+		let lines = content.split('\n');
+		let formattedLines = lines.map(line => {
+			let stringified_line = JSON.stringify(JSON.parse(line), null, n_spaces);
+			//indent each line in the stringified json by n_spaces
+			let indented_lines = stringified_line.split('\n').map((l) => ' '.repeat(n_spaces) + l);
+			return indented_lines.join('\n');
+
+		});
+		formattedContent = "[// lines autoexpanded as a list\n" + formattedLines.join(',\n') + "\n]";
+		console.log(formattedContent);
+	} catch (e) {
+		return content;
+	}
+	return formattedContent
+}
+
+function collapseJson(content) {
+	let formattedContent;
+	try {
+		// remove comments including comments at the end of lines
+		let contentNoComments = content.split('\n').map(line => line.replace(/\/\/.*/, '')).join("\n");
+
+		let lines = JSON.parse(contentNoComments);
+		let formattedLines = lines.map(line => JSON.stringify(line));
+
+		formattedContent = formattedLines.join('\n');
+	} catch (e) {
+		return content;
+	}
+	return formattedContent;
+}
+
+
+function deactivate() { }
 
 module.exports = {
 	activate,
-	deactivate
+	deactivate,
+	expandJson,
+	collapseJson
 }

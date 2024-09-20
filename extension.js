@@ -54,9 +54,16 @@ function overwriteDocument(editor, content, newContent) {
 
 function expandJson(content) {
 	const n_spaces = 2;
+	let finalNewline = false;
 	let formattedContent;
 	try {
 		let lines = content.split('\n');
+
+		// remove the final newline if it exists and set variable to add it back later
+		if (lines[lines.length - 1] === '') {
+			lines.pop();
+			finalNewline = true;
+		}
 		let formattedLines = lines.map(line => {
 			let stringified_line = JSON.stringify(JSON.parse(line), null, n_spaces);
 			//indent each line in the stringified json by n_spaces
@@ -64,8 +71,10 @@ function expandJson(content) {
 			return indented_lines.join('\n');
 
 		});
-		formattedContent = "[// lines autoexpanded as a list\n" + formattedLines.join(',\n') + "\n]";
-		console.log(formattedContent);
+		formattedContent = "[\n" + formattedLines.join(',\n') + "\n]";
+		if (finalNewline) {
+			formattedContent += '\n';
+		}
 	} catch (e) {
 		return content;
 	}
@@ -74,14 +83,22 @@ function expandJson(content) {
 
 function collapseJson(content) {
 	let formattedContent;
-	try {
-		// remove comments including comments at the end of lines
-		let contentNoComments = content.split('\n').map(line => line.replace(/\/\/.*/, '')).join("\n");
+	let finalNewline = false;
 
-		let lines = JSON.parse(contentNoComments);
+	// remove the final newline if it exists and set variable to add it back later
+	if (content[content.length - 1] === '\n') {
+		content = content.slice(0, -1);
+		finalNewline = true;
+	}
+
+	try {
+		let lines = JSON.parse(content);
 		let formattedLines = lines.map(line => JSON.stringify(line));
 
 		formattedContent = formattedLines.join('\n');
+		if (finalNewline) {
+			formattedContent += '\n';
+		}
 	} catch (e) {
 		return content;
 	}

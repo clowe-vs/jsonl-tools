@@ -4,6 +4,10 @@ const vscode = require('vscode');
 /**
  * @param {vscode.ExtensionContext} context
  */
+
+
+let isExpanded = false;
+
 function activate(context) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('jsonl-tools.expand', function () {
@@ -41,6 +45,28 @@ function activate(context) {
 			vscode.commands.executeCommand('jsonl-tools.collapse');
 		}
 	});
+
+	function updateButtonVisibility() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			const firstCharacter = editor.document.getText(new vscode.Range(0, 0, 0, 1));
+
+			if (firstCharacter === '[') {
+				vscode.commands.executeCommand('setContext', 'jsonlState', 'collapsible');
+			} else if (firstCharacter === '{') {
+				vscode.commands.executeCommand('setContext', 'jsonlState', 'expandable');
+			} else {
+				vscode.commands.executeCommand('setContext', 'jsonlState', 'unknown');
+			}
+		}
+	}
+
+	// Add event listeners to update button visibility when the file changes
+	vscode.window.onDidChangeActiveTextEditor(updateButtonVisibility);
+	vscode.workspace.onDidChangeTextDocument(updateButtonVisibility);
+
+	// Update button visibility on startup
+	updateButtonVisibility();
 }
 
 function overwriteDocument(editor, content, newContent) {

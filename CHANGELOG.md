@@ -1,5 +1,8 @@
 # Change Log
 
+## [0.0.4]
+
+- Added buttons for expand/collapse
 
 ## [0.0.3]
 

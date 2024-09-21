@@ -8,7 +8,7 @@
     "url": "https://github.com/ishmandoo/jsonl-tools"
   },
   "icon": "icon.png",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.92.0"
   },
@@ -33,7 +33,21 @@
         "command": "jsonl-tools.collapse-and-save",
         "title": "Collapse JSONL and Save"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "jsonl-tools.expand",
+          "when": "jsonlState == 'expandable'",
+          "group": "navigation"
+        },
+        {
+          "command": "jsonl-tools.collapse",
+          "when": "jsonlState == 'collapsible'",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint .",

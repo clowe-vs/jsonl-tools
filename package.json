@@ -8,7 +8,7 @@
     "url": "https://github.com/clowe-vs/jsonl-tools"
   },
   "icon": "icon.png",
-  "version": "0.0.4",
+  "version": "0.0.4a",
   "engines": {
     "vscode": "^1.92.0"
   },

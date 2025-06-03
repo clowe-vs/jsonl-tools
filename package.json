@@ -2,10 +2,10 @@
   "name": "jsonl-tools",
   "displayName": "jsonl-tools",
   "description": "A set of useful commands for working with JSON Lines files.",
-  "publisher": "benwiener",
+  "publisher": "clowe",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ishmandoo/jsonl-tools"
+    "url": "https://github.com/clowe-vs/jsonl-tools"
   },
   "icon": "icon.png",
   "version": "0.0.4",

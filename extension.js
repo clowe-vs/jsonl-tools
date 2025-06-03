@@ -123,7 +123,7 @@ function collapseJson(content) {
 
 		formattedContent = formattedLines.join('\n');
 		if (finalNewline) {
-			formattedContent += '\n';
+			formattedContent += '\n\n';
 		}
 	} catch (e) {
 		return content;

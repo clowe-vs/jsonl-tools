@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.4a]
+
+- Added additional newline on collapse (and save) to satisfy github PRs
+
 ## [0.0.4]
 
 - Added buttons for expand/collapse
